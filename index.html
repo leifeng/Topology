@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <style>
+        html,
+        body {
+            width: 100%;
+            height: 100%;
+            padding: 0;
+            margin: 0;
+        }
+
+        .main {
+            position: relative;
+            width: 100%;
+            height: 100%;
+        }
+
+        .add {
+            position: absolute;
+            width: 60px;
+            height: 60px;
+            line-height: 60px;
+            text-align: center;
+            border-radius: 50%;
+            background-color: blueviolet;
+            bottom: 10px;
+            right: 10px;
+            color: #fff;
+            font-size: 14px;
+        }
+
+        .link {
+            position: absolute;
+            width: 60px;
+            height: 60px;
+            line-height: 60px;
+            text-align: center;
+            border-radius: 50%;
+            background-color: blueviolet;
+            bottom: 10px;
+            right: 90px;
+            color: #fff;
+            font-size: 14px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="main">
+        <div id="topology"></div>
+        <div class="add" id="add">ADD</div>
+        <div class="link" id="link">link</div>
+    </div>
+
+    <script src="assets/topology.js"></script>
+    <script>
+        var ids = []
+        var types = ['router', 'server', 'internat', 'firewarll', 'network']
+        var assets = [
+            {
+                type: 'router',
+                width: 81,
+                height: 81,
+                url: './images/topo-02.png'
+            }, {
+                type: 'server',
+                width: 81,
+                height: 81,
+                url: './images/topo-03.png'
+            }, {
+                type: 'internat',
+                width: 81,
+                height: 81,
+                url: './images/topo-04.png'
+            },
+            {
+                type: 'firewarll',
+                width: 81,
+                height: 81,
+                url: './images/topo-05.png'
+            }, {
+                type: 'network',
+                width: 81,
+                height: 81,
+                url: './images/topo-06.png'
+            }]
+        var nodes = [
+            {
+                id: 1,
+                name: 'name-1',
+                type: 'router',
+                status: 'active'
+            },
+            {
+                id: 2,
+                name: 'name-2',
+                type: 'server',
+                status: 'active'
+            },
+            {
+                id: 3,
+                name: 'name-3',
+                type: 'server',
+                status: 'active'
+            },
+            {
+                id: 4,
+                name: 'name-4',
+                type: 'internat',
+                status: 'active'
+            },
+            {
+                id: 5,
+                name: 'name-5',
+                type: 'firewarll',
+                status: 'stop'
+            }, {
+                id: 6,
+                name: 'name-5',
+                type: 'firewarll',
+                status: 'stop'
+            }, {
+                id: 7,
+                name: 'name-5',
+                type: 'firewarll',
+                status: 'stop'
+            }, {
+                id: 8,
+                name: 'name-5',
+                type: 'firewarll',
+                status: 'stop'
+            }, {
+                id: 9,
+                name: 'name-5',
+                type: 'firewarll',
+                status: 'stop'
+            }, {
+                id: 10,
+                name: 'name-5',
+                type: 'internat',
+                status: 'stop'
+            }, {
+                id: 11,
+                name: 'name-5',
+                type: 'internat',
+                status: 'stop'
+            }
+        ]
+        var links = [
+            {
+                source: 1,
+                target: 2,
+                type: 'routerToserver'
+            },
+            {
+                source: 2,
+                target: 3,
+                type: 'serverTointernat'
+            }
+        ]
+        var menus = [
+            {
+                type: 'link',
+                menuItems: [
+                    { name: '删除', value: 'delete' }
+                ]
+            }, {
+                type: 'server',
+                menuItems: [
+                    { name: '查看server', value: 'info' },
+                    { name: '更新server', value: 'update' },
+                    { name: '删除server', value: 'delete' }
+                ]
+            }, {
+                type: 'router',
+                menuItems: [
+                    { name: '查看router', value: 'info' },
+                    { name: '更新router', value: 'update' },
+                    { name: '删除router', value: 'delete' }
+                ]
+            }
+            , {
+                type: 'internat',
+                menuItems: [
+                    { name: '查看internat', value: 'info' },
+                    { name: '更新internat', value: 'update' },
+                    { name: '删除internat', value: 'delete' }
+                ]
+            },
+            {
+                type: 'firewarll',
+                menuItems: [
+                    { name: '查看firewarll', value: 'info' },
+                    { name: '更新firewarll', value: 'update' },
+                    { name: '删除firewarll', value: 'delete' }
+                ]
+            },
+            {
+                type: 'network',
+                menuItems: [
+                    { name: '查看network', value: 'info' },
+                    { name: '更新network', value: 'update' },
+                    { name: '删除network', value: 'delete' }
+                ]
+            }
+        ]
+        var topology = new Topology('#topology', assets)
+        function menusHandle(obj, type) {
+            switch (obj.type) {
+                case 'server':
+                case 'router':
+                case 'internat':
+                case 'firewarll':
+                case 'network':
+                    var ra = parseInt(Math.random() * 100)
+                    if (type === 'delete') {
+                        topology.removeNode(obj.id)
+                    }
+                    if (type === 'update') {
+                        topology.updateNode(obj.id, {
+                            name: 'name-' + obj.id + '-' + ra
+                        })
+                    }
+                    break
+                default:
+                    topology.removeLink(obj.id)
+                    break;
+            }
+            console.log(obj, type)
+        }
+
+        topology.loadData({
+            nodes: nodes,
+            links: links
+        })
+        topology.setMenu({
+            menus: menus,
+            handle: menusHandle
+        })
+        document.getElementById('add').addEventListener('click', function () {
+            var ra = parseInt(Math.random() * 1000)
+            ids.push(ra)
+            topology.addNode({
+                id: ra,
+                name: 'name-' + ra,
+                type: types[parseInt(Math.random() * 10 / 2)],
+                status: 'active'
+            })
+        }, false)
+        document.getElementById('link').addEventListener('click', function () {
+            topology.addLink({
+                source: ra,
+                target: 2,
+                type: 'serverTointernat'
+            })
+        }, false)
+    </script>
+</body>
+
+</html>
